@@ -1507,6 +1507,7 @@ function refreshOptions(){
 }
 function startLevel(mode, idx){
   newGame(mode, idx);
+  for (const o of document.querySelectorAll('#game .ov')) o.classList.remove('on'); // close end/pause/card overlays
   show('game'); buildPalette(); layout();
   refreshHud(); refreshPanel(true);
   playMusic('battle');
