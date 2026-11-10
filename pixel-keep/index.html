@@ -373,7 +373,7 @@ const perk = id => save.perks[id] || 0;
 const survStars = () => Math.min(5, Math.floor(save.surv.wave / 10));
 const totalStars = () => save.stars.reduce((a,b)=>a+b,0) + survStars();
 const availStars = () => totalStars() - save.spent;
-const towerAvail = t => save.unlocked >= TOWER_UNLOCK[t];
+const towerAvail = t => (G && G.mode === 'survival') || save.unlocked >= TOWER_UNLOCK[t]; // Survival: every tower
 
 /* ================================ AUDIO ================================ */
 const AU = { ctx:null, sfx:null, mus:null, noise:null, last:{} };

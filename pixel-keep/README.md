@@ -6,7 +6,7 @@ An offline, single-file pixel-art tower defense game. Open `index.html` in any m
 - **10 campaign levels**, each with its own map and theme and a smooth difficulty curve. Bosses appear on levels 4, 7 and 10 (Slime King, Iron Golem, Dread Lich).
 - **8 towers:** Arrow, Cannon, Frost, Gold Mine (economy and damage aura), Sniper, Tesla, Missile (anti-air) and Flame. Each has 3 upgrade tiers, 4 targeting modes, and can be sold back.
 - **12 enemy types:** flyers, armored, magic-resistant, splitters, healers, shields, blinkers and sprinters.
-- **Survival mode** (available from the start): procedural, endlessly scaling waves with periodic bosses. Your best wave is saved.
+- **Survival mode** (available from the start): procedural, endlessly scaling waves with periodic bosses. Every tower is available in Survival. Your best wave is saved.
 - **Meta-progression:** stars earned per level buy permanent upgrades. In each run you can also spend gold on Research.
 - **Saves to localStorage:** unlocks, stars, upgrades, survival best and options.
 - **Responsive layout:** landscape uses a side panel. In portrait the map is transposed into a vertical layout and the controls sit in a thumb-reach bottom strip. Touch and mouse are both supported.
