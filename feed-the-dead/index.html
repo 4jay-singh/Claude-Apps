@@ -102,6 +102,21 @@ body.port #iBody{font-size:11px;line-height:1.3;overflow:hidden;flex:1;min-heigh
 .toggle{display:flex;justify-content:space-between;align-items:center;gap:10px}
 #cardCv{width:144px;height:144px;image-rendering:pixelated;background:#2c2638;box-shadow:0 0 0 3px var(--edge)}
 #cardName{color:var(--green);font-size:20px}
+#ovBook{z-index:30}
+.book{height:100%;width:min(760px,100%);max-width:min(760px,100%);background:#2a2236;align-items:stretch;text-align:left}
+.booktabs{justify-content:center}.booktabs button{min-width:0;flex:1 1 20%;padding:6px 4px;font-size:13px}
+.booktabs button.on{background:#2f6aa8;box-shadow:inset -3px -3px 0 rgba(0,0,0,.35),0 0 0 3px #fff}
+#bookBody{display:flex;flex-direction:column;gap:12px;overflow-y:auto;min-height:0;flex:1}
+.entry{display:flex;gap:12px;background:#f2ead6;color:#2a1e1a;padding:10px;box-shadow:0 0 0 3px var(--edge),inset 0 0 0 2px #d8c8a8}
+.entry canvas{width:96px;height:96px;image-rendering:pixelated;background:#d8ccb0;flex:none;box-shadow:0 0 0 2px #2a1e1a}
+.entry .tx{flex:1;min-width:0;font-size:12px;line-height:1.45}
+.entry h3{margin:0 0 2px;font-size:16px;color:#7a1a2a;letter-spacing:1px}
+.entry .tip{color:#2f6a2a;margin-top:4px}.entry .tip::before{content:"TIP: ";font-weight:bold}
+.entry .tag{color:#140f1a}
+.entry table{border-collapse:collapse;margin-top:4px;font-size:11px}
+.entry td,.entry th{border:1px solid #c8b898;padding:1px 6px;text-align:center}.entry th{background:#e4d8bc}
+.entry td:first-child{text-align:left;font-weight:bold}
+@media (max-width:480px){.entry{flex-direction:column;align-items:center}.entry .tx{width:100%}}
 </style>
 </head>
 <body class="land">
@@ -119,6 +134,7 @@ body.port #iBody{font-size:11px;line-height:1.3;overflow:hidden;flex:1;min-heigh
       <button class="gold" id="bShop">&#9733; Restaurant Upgrades</button>
       <div class="row" style="flex-wrap:nowrap">
         <button id="bHelp" style="flex:1">How to play</button>
+        <button id="bGuide" style="flex:1">&#128213; Guide</button>
         <button id="bOptions" style="flex:1">Options</button>
       </div>
     </div>
@@ -162,7 +178,7 @@ body.port #iBody{font-size:11px;line-height:1.3;overflow:hidden;flex:1;min-heigh
     <div class="list" style="font-size:13px;line-height:1.5">
       <div class="item"><div class="tx"><b>Opening night... of the dead</b><span>Zombies shamble down the aisle toward your kitchen. Turns out they love junk food even more than brains. Feed them until their STUFFED meter fills and they go POP!</span></div></div>
       <div class="item"><div class="tx"><b>Protect the staff lunches</b><span>Every zombie that reaches the kitchen eats lunches (your lives). Lose them all and the restaurant is overrun.</span></div></div>
-      <div class="item"><div class="tx"><b>Build stations</b><span>Pick a food station, then tap a table or a marked floor tile. On touch screens tap once to preview and again to build. With a mouse, one click builds. Tap a station to upgrade, sell or change its targeting.</span></div></div>
+      <div class="item"><div class="tx"><b>Build stations</b><span>Pick a food station, then tap a marked floor tile (tables, plants and decor block building). On touch screens tap once to preview and again to build. With a mouse, one click builds. Tap a station to upgrade, sell or change its targeting.</span></div></div>
       <div class="item"><div class="tx"><b>Picky eaters</b><span>Foods are tagged MEAT, VEGGIE, SWEET, DRINK or SPICY. Vegans barely touch meat, gym zombies avoid sweets and drinks, hard-hats are picky about meat, and spice fiends love SPICY. Skaters are too fast to catch: only Slushie, Boba and Churro stations can feed them.</span></div></div>
       <div class="item"><div class="tx"><b>Money</b><span>Popped zombies drop coins and each new wave pays a bonus. Calling waves early pays extra. Tip Jars pay out every wave and boost adjacent stations; Espresso Bars make neighbors fire faster. Secret Recipes (the book button) are buffs for the current run.</span></div></div>
       <div class="item"><div class="tx"><b>Keys (optional)</b><span>1-9, 0 pick a station &middot; R recipes &middot; N next wave &middot; F speed &middot; Space pause &middot; U upgrade &middot; S sell &middot; T target mode &middot; Esc cancel</span></div></div>
@@ -204,6 +220,7 @@ body.port #iBody{font-size:11px;line-height:1.3;overflow:hidden;flex:1;min-heigh
         <button class="good" id="pResume">&#9654; Resume</button>
         <button id="pRestart">&#8635; Restart</button>
         <div class="row" style="flex-wrap:nowrap"><button id="pSfx" style="flex:1">SFX</button><button id="pMus" style="flex:1">Music</button></div>
+        <button id="pGuide">&#128213; Field Guide</button>
         <button class="bad" id="pQuit">Quit to menu</button>
       </div>
     </div></div>
@@ -228,6 +245,13 @@ body.port #iBody{font-size:11px;line-height:1.3;overflow:hidden;flex:1;min-heigh
     </div></div>
   </div>
 
+  <!-- ================= FIELD GUIDE ================= -->
+  <div class="ov" id="ovBook"><div class="box book">
+    <h2 style="margin:0">&#128213; Field Guide</h2>
+    <div class="row booktabs" id="bookTabs"></div>
+    <div id="bookBody"></div>
+    <button id="bookClose">&#9664; Close</button>
+  </div></div>
 </div>
 
 <script>
@@ -354,7 +378,7 @@ const LEVELS = [
     waves:'bouncer 12 0.7, runner 15 0.4; shambler 20 0.4, skater 6 1; office 22 0.45; skater 10 0.9; gym 25 0.4; cheer 25 0.4, chef 8 1; bouncer 25 0.4; parent 30 0.4; spice 30 0.3; hardhat 25 0.4, skater 12 0.7; office 25 0.4, gym 20 0.4; vegan 40 0.2, skater 15 0.6; cheer 30 0.35, bride 12 0.7; bouncer 25 0.4, chef 12 0.8; hardhat 30 0.35; skater 25 0.5; office 30 0.35, gym 25 0.35; mallcop 2 6, truck 1 1' },
   { name:'Stadium Concessions', cuisine:'Game day', theme:'stadium', gold:600, lives:20, hpMul:2.2, boss:true,
     paths:[[[-1,8],[2,8],[2,2],[5,2],[5,6],[7,6],[7,2]], [[15,8],[12,8],[12,2],[9,2],[9,6],[7,6],[7,2]]],
-    waves:'bouncer 15 0.6; skater 8 1; office 25 0.4; gym 28 0.35; hardhat 28 0.35; vegan 40 0.2, cheer 20 0.4; parent 30 0.35, chef 10 0.8; spice 35 0.25; skater 20 0.55; mallcop 1 1, shambler 30 0.3; office 30 0.35, hardhat 20 0.4; gym 30 0.3, cheer 25 0.35; bouncer 30 0.35, chef 12 0.7; skater 25 0.45, bride 15 0.5; truck 1 1, hardhat 20 0.4; spice 40 0.22, runner 40 0.2; office 35 0.3, gym 30 0.3; skater 30 0.4, hardhat 25 0.35; parent 35 0.3, chef 15 0.6, cheer 25 0.35; celeb 1 1, gym 20 0.6, hardhat 20 0.6' },
+    waves:'bouncer 15 0.6; skater 8 1; office 18 0.5; gym 18 0.5; hardhat 22 0.4; vegan 40 0.2, cheer 20 0.4; parent 30 0.35, chef 10 0.8; spice 35 0.25; skater 20 0.55; mallcop 1 1, shambler 30 0.3; office 30 0.35, hardhat 20 0.4; gym 30 0.3, cheer 25 0.35; bouncer 30 0.35, chef 12 0.7; skater 25 0.45, bride 15 0.5; truck 1 1, hardhat 20 0.4; spice 40 0.22, runner 40 0.2; office 35 0.3, gym 30 0.3; skater 30 0.4, hardhat 25 0.35; parent 35 0.3, chef 15 0.6, cheer 25 0.35; celeb 1 1, gym 20 0.6, hardhat 20 0.6' },
 ];
 const SURVIVAL = { name:'Graveyard Shift', cuisine:'24-hour diner', theme:'night', gold:400, lives:20,
   paths:[[[-1,1],[13,1],[13,8],[1,8],[1,3],[11,3],[11,6],[4,6]]] };
@@ -373,6 +397,51 @@ const RESEARCH = [
   { id:'range', name:'Strong Aroma',   desc:'+8% range',                    cost:[120,250,400] },
   { id:'eco',   name:'Happy Hour',     desc:'+15% coins & wave bonus',      cost:[100,220] },
   { id:'heal',  name:'Spare Lunches',  desc:'Restore 3 lunches (up to max)',cost:[120,200,300] },
+];
+
+// Field Guide tips
+const ZTIPS = {
+  shambler:'Anything works. Burger Grills handle them cheaply.',
+  runner:'Slushie slows them down; Taco Truck volleys catch whole packs.',
+  bouncer:'Big appetite: Sushi Chef and upgraded Pizza Ovens fill them fastest.',
+  hardhat:'Skip pure-meat stations (Burger, Taco). Pizza, Boba, Slushie and Curry work at full power.',
+  vegan:'Burger and Taco barely work. Pizza, Sushi and Curry have veggie options, so they work fully.',
+  gym:'Slushie, Boba and Churro barely work. Burger, Pizza, Sushi and Curry are full power.',
+  spice:'Taco Truck and Curry Pot fill them DOUBLE. Everything else is weaker.',
+  skater:'Have a Boba Stand or Churro Cart ready before they arrive. Slushie slows them but barely feeds.',
+  cheer:'Pop them early so they can’t speed up the crowd. A Sushi Chef on FIRST targeting helps.',
+  chef:'Heals neighbors every 3 s. Snipe it with Sushi or out-damage the healing with splash.',
+  bride:'Pop the couple close together or the survivor sprints. Splash (Pizza, Churro) hits both.',
+  groom:'See Bride. Splash stations hit the pair together.',
+  office:'The briefcase soaks the first bites. Rapid stations (Burger, Taco) chew through it fast.',
+  parent:'Pops into 3 Minis. Splash and Boba chains clean them up.',
+  mini:'Tiny and quick. Splash and Boba chains handle swarms.',
+  mallcop:'Spread stations out so the whistle only stuns a couple. Sushi Chefs deal great boss damage.',
+  truck:'Hit it hard before it’s half full: then it takes 35% less from everything. Splash clears the minions.',
+  celeb:'Fans swarm the aisle: bring splash. At half full bodyguards add a shield: rapid fire helps. Spread stations against menu rewrites.',
+};
+const STIPS = {
+  burger:'Best early value. Weak against Vegans and Hard-Hats. Tier 3 doubles output.',
+  pizza:'Works on every picky eater (veggie AND meat). Place it on corners where zombies bunch up.',
+  slushie:'Put it where the aisle doubles back so one pulse hits two lanes. Pair it with heavy hitters.',
+  tipjar:'Build early: it pays for itself in about 5 waves. Once upgraded, place it next to your best stations.',
+  boba:'Chains love crowds. Your best early answer to Skaters.',
+  sushi:'Huge range: tuck it in the middle of the map. STUFFED targeting finishes zombies off. Great vs bosses.',
+  churro:'Homing splash with +60% vs Skaters. Gym zombies resist it.',
+  taco:'Several targets per volley: great vs swarms and briefcases. Spicy, so double vs Spice Fiends.',
+  curry:'Short range but constant: put it on aisle corners. The lingering spice keeps filling.',
+  espresso:'Boosts all 8 neighbors’ serving speed. Build your strongest stations around it.',
+};
+const GENERAL_TIPS = [
+  ['Read the tags','Every station has food tags. Picky zombies take less from some tags, so mix your menu.'],
+  ['Corners are gold','Stations near aisle corners and U-turns stay in range of zombies for longer.'],
+  ['Skaters','Only Slushie, Boba and Churro can feed Skaters. Have one ready by the Sushi Bar (level 5).'],
+  ['Economy','Tip Jars pay every wave. Calling a wave early pays a bonus. Happy Hour boosts coins.'],
+  ['Upgrade vs build','Upgrades are cheaper per damage than new stations once you have good spots covered.'],
+  ['Targeting','FIRST protects the kitchen, STUFFED finishes zombies, CLOSE is good for short-range stations.'],
+  ['Clusters','Tip Jar (+damage) and Espresso Bar (+speed) buff neighbors. Surround them with stations.'],
+  ['Bosses','Bosses eat 10-20 lunches if they reach the kitchen. Save gold for Sushi Chefs and upgrades.'],
+  ['Stars','3 stars = no lunches lost. Spend stars on permanent Restaurant Upgrades, then replay for more.'],
 ];
 
 /* ================================ SAVE ================================ */
@@ -809,7 +878,7 @@ function mapW(){ return (G.flip ? ROWS : COLS) * TILE; }
 function mapH(){ return (G.flip ? COLS : ROWS) * TILE; }
 function inGrid(lx,ly){ return lx>=0 && ly>=0 && lx<COLS && ly<ROWS; }
 function cellW(sx,sy){ const [lx,ly] = swap(sx,sy,G.flip); return inGrid(lx,ly) ? G.grid[ly][lx] : -1; }
-// grid cells: 0 floor (buildable), 1 aisle, 2 blocked decor, 3 kitchen, 4 table (buildable)
+// grid cells: 0 floor (buildable), 1 aisle, 2 blocked decor, 3 kitchen, 4 table (blocked: diners sit there)
 function buildGrid(L, seed){
   const grid = []; for (let y=0;y<ROWS;y++) grid.push(Array(COLS).fill(0));
   for (const pts of L.paths) for (let i=0;i<pts.length-1;i++){
@@ -823,7 +892,7 @@ function buildGrid(L, seed){
     if (Math.abs(x-cx)<=1 && Math.abs(y-cy)<=1) continue;
     const r = rnd();
     if (r < 0.07){ grid[y][x] = 2; deco.push({x,y,k:T.deco[(rnd()*T.deco.length)|0]}); }
-    else if (r < 0.24) grid[y][x] = 4;
+    else if (r < 0.2) grid[y][x] = 4;
   }
   return { grid, deco };
 }
@@ -1008,7 +1077,7 @@ const towerRate = tw => STATIONS[tw.type].rate[tw.tier] * G.rateMul * (1 + tw.ha
 /* ============================== ENTITIES ============================== */
 function towerAtCanon(lx,ly){ return G.towers.find(t => t.lx === lx && t.ly === ly); }
 function placeTowerPos(t){ const [sx,sy] = swap(t.lx,t.ly,G.flip); t.x = (sx+0.5)*TILE; t.y = (sy+0.5)*TILE; }
-function canBuild(lx,ly){ return inGrid(lx,ly) && (G.grid[ly][lx] === 0 || G.grid[ly][lx] === 4) && !towerAtCanon(lx,ly); }
+function canBuild(lx,ly){ return inGrid(lx,ly) && G.grid[ly][lx] === 0 && !towerAtCanon(lx,ly); }
 function buildTower(type, lx, ly){
   const cost = buildCost(type);
   if (!canBuild(lx,ly)){ sfx('err'); return false; }
@@ -1468,6 +1537,7 @@ function show(name){
   screen = name;
   for (const s of document.querySelectorAll('.screen')) s.classList.toggle('on', s.id === name);
   if (name !== 'game') for (const o of document.querySelectorAll('.ov')) o.classList.remove('on');
+  $('ovBook').classList.remove('on');
   if (name === 'title'){ refreshTitle(); playMusic('menu'); }
   if (name === 'levels') buildLevelGrid();
   if (name === 'shop') buildShop();
@@ -1511,7 +1581,7 @@ function startLevel(mode, idx){
   show('game'); buildPalette(); layout();
   refreshHud(); refreshPanel(true);
   playMusic('battle');
-  if (G.tutorial === 1) setTimeout(() => toast('Tap the BURGER GRILL, then tap a table near the aisle', 5), 400);
+  if (G.tutorial === 1) setTimeout(() => toast('Tap the BURGER GRILL, then tap a marked floor tile near the aisle', 5), 400);
   else toast(mode === 'campaign' ? `${idx+1}. ${G.L.name} (${G.L.cuisine}) · ${G.totalWaves} waves` : 'Graveyard Shift: feed them as long as you can!', 3);
 }
 // ---- palette ----
@@ -1596,11 +1666,11 @@ function refreshPanel(force){
   } else if (G.placing){
     const d = STATIONS[G.placing];
     $('iName').textContent = d.name + ' ●' + buildCost(G.placing);
-    $('iBody').innerHTML = tagHtml(d.tags) + ' ' + d.desc + '<br>' + statLine(G.placing, 0) + '<br><span class="up">' + (lastPointer === 'mouse' ? 'Click a table or marked floor tile. Right-click/Esc cancels.' : 'Tap a spot, then tap it again to build.') + '</span>';
+    $('iBody').innerHTML = tagHtml(d.tags) + ' ' + d.desc + '<br>' + statLine(G.placing, 0) + '<br><span class="up">' + (lastPointer === 'mouse' ? 'Click a marked floor tile. Right-click/Esc cancels.' : 'Tap a spot, then tap it again to build.') + '</span>';
     iUp.style.display = 'none'; iSell.style.display = 'none'; iT.style.display = 'none'; $('iClose').style.display = '';
   } else {
     $('iName').textContent = 'Kitchen';
-    $('iBody').innerHTML = 'Pick a station above, then place it on a table or a marked floor tile near the aisle. Tap a station to upgrade or sell it.';
+    $('iBody').innerHTML = 'Pick a station above, then place it on a marked floor tile near the aisle. Tap a station to upgrade or sell it.';
     iUp.style.display = 'none'; iSell.style.display = 'none'; iT.style.display = 'none'; $('iClose').style.display = 'none';
   }
 }
@@ -1630,7 +1700,7 @@ function toast(msg, dur=2.5){ const t = $('toast'); t.textContent = msg; t.class
 let bannerT = null;
 function showBanner(msg, col){ const b = $('banner'); b.textContent = msg; b.style.color = col || '#fff'; b.classList.add('on'); clearTimeout(bannerT); bannerT = setTimeout(()=>b.classList.remove('on'), 1600); }
 // ---- overlays ----
-function setModal(id, on){ $(id).classList.toggle('on', on); if (G) G.modal = !!document.querySelector('#game .ov.on'); }
+function setModal(id, on){ $(id).classList.toggle('on', on); if (G) G.modal = !!document.querySelector('#game .ov.on, #ovBook.on'); }
 function togglePause(){ if (!G || G.state !== 'play') return; const on = !$('ovPause').classList.contains('on'); refreshOptions(); setModal('ovPause', on); }
 function openResearch(){ if (!G || G.state !== 'play') return; sfx('click'); buildResearch(); setModal('ovResearch', true); }
 function buildResearch(){
@@ -1647,6 +1717,71 @@ function buildResearch(){
   }
   const g = document.createElement('div'); g.className = 'small'; g.textContent = 'Gold: ' + Math.floor(G.gold); l.prepend(g);
 }
+// ---------- Field Guide ----------
+let bookTab = 'zombies';
+function zombiePortrait(type, size=48){
+  const cv = document.createElement('canvas'); cv.width = size; cv.height = size;
+  const c = cv.getContext('2d'); c.imageSmoothingEnabled = false; const d = ZOMBIES[type];
+  R(c, 0, size*0.75, size, size*0.25, 'rgba(0,0,0,.08)');
+  const fake = { type, d, look:makeLook(type), dir:0, frame:0, t:0, hp:1, maxHp:1, shield:d.shield ? 1 : 0 };
+  drawZombie(c, fake, size/2, size*0.9, type === 'celeb' || type === 'chef' ? 1.35 : type === 'truck' ? 1.4 : 1.65, false);
+  return cv;
+}
+function speedWord(v){ return v >= 1.5 ? 'very fast' : v >= 1.1 ? 'fast' : v >= 0.8 ? 'average' : v >= 0.6 ? 'slow' : 'very slow'; }
+function prefHtml(d){
+  if (d.skater) return 'Only <b>DRINK/SWEET</b> stations can feed it (Slushie, Boba, Churro)';
+  if (!d.pref) return 'Eats everything at full power';
+  return Object.entries(d.pref).map(([k,v]) => (k === '_' ? '<span class="tag" style="background:#c8b898">OTHER</span>' : `<span class="tag" style="background:${TAGCOL[k]}">${k}</span>`) + ` ${Math.round(v*100)}%`).join(' &nbsp;');
+}
+function zombieEntry(type){
+  const d = ZOMBIES[type], e = document.createElement('div'); e.className = 'entry';
+  e.appendChild(zombiePortrait(type));
+  const extra = [];
+  if (d.shield) extra.push(`Briefcase shield: ${d.shield}`);
+  if (d.split) extra.push(`Pops into ${d.split} Mini Zombies`);
+  if (d.couple) extra.push('Arrives as a couple');
+  const tx = document.createElement('div'); tx.className = 'tx';
+  tx.innerHTML = `<h3>${d.name}</h3>${d.desc}<br>
+    <b>Appetite</b> ${d.hp} &middot; <b>Speed</b> ${d.spd} (${speedWord(d.spd)}) &middot; <b>Coins</b> ${d.gold} &middot; <b>Lunches eaten</b> ${d.dmg}<br>
+    <b>Food:</b> ${prefHtml(d)}${extra.length ? '<br><b>Special:</b> ' + extra.join(' &middot; ') : ''}
+    <div class="tip">${ZTIPS[type] || ''}</div>`;
+  e.appendChild(tx); return e;
+}
+function stationEntry(type){
+  const d = STATIONS[type], e = document.createElement('div'); e.className = 'entry';
+  const cv = document.createElement('canvas'); cv.width = 32; cv.height = 32; drawStation(cv.getContext('2d'), type, 3, 0, 0, 0, 0); e.appendChild(cv);
+  const rows = [];
+  const row = (label, arr, fmt = v => v) => rows.push(`<tr><td>${label}</td>${arr.map(v => `<td>${fmt(v)}</td>`).join('')}</tr>`);
+  if (d.dmg) row(type === 'curry' ? 'Damage/s' : 'Damage', d.dmg);
+  if (!d.support) row('Range', d.range);
+  if (d.rate && type !== 'curry') row('Speed/s', d.rate);
+  if (d.splash) row('Splash', d.splash);
+  if (d.slow) row('Slow', d.slow, v => Math.round(v*100) + '%');
+  if (d.chain) row('Chain', d.chain);
+  if (d.targets) row('Targets', d.targets);
+  if (d.multi) row('Shots', d.multi);
+  if (d.gold) row('Gold/wave', d.gold);
+  if (d.buff) row('Dmg buff', d.buff, v => '+' + Math.round(v*100) + '%');
+  if (d.haste) row('Speed buff', d.haste, v => '+' + Math.round(v*100) + '%');
+  row('Cost', [d.cost].concat(d.upg), (v) => v);
+  const tx = document.createElement('div'); tx.className = 'tx';
+  tx.innerHTML = `<h3>${d.name}</h3>${tagHtml(d.tags)} ${d.desc}<br><b>Unlocks:</b> level ${STATION_UNLOCK[type]}${d.skate ? ' &middot; <b style="color:#2a6aa8">Feeds Skaters</b>' : ''}
+    <table><tr><th></th><th>Base</th><th>&#9733;</th><th>&#9733;&#9733;</th><th>&#9733;&#9733;&#9733;</th></tr>${rows.join('')}</table>
+    <div class="tip">${STIPS[type] || ''}</div>`;
+  e.appendChild(tx); return e;
+}
+function buildBook(){
+  const tabs = [['zombies','Zombies'],['bosses','Bosses'],['stations','Stations'],['tips','Tips']];
+  const tb = $('bookTabs'); tb.innerHTML = '';
+  for (const [k,label] of tabs){ const b = document.createElement('button'); b.textContent = label; b.classList.toggle('on', bookTab === k); b.onclick = () => { bookTab = k; sfx('click'); buildBook(); }; tb.appendChild(b); }
+  const body = $('bookBody'); body.innerHTML = ''; body.scrollTop = 0;
+  if (bookTab === 'zombies') Object.keys(ZOMBIES).filter(k => !ZOMBIES[k].boss).forEach(k => body.appendChild(zombieEntry(k)));
+  else if (bookTab === 'bosses') Object.keys(ZOMBIES).filter(k => ZOMBIES[k].boss).forEach(k => body.appendChild(zombieEntry(k)));
+  else if (bookTab === 'stations') STATION_ORDER.forEach(k => body.appendChild(stationEntry(k)));
+  else for (const [h,t] of GENERAL_TIPS){ const e = document.createElement('div'); e.className = 'entry'; e.innerHTML = `<div class="tx"><h3>${h}</h3>${t}</div>`; body.appendChild(e); }
+}
+function openBook(tab){ if (tab) bookTab = tab; sfx('click'); buildBook(); setModal('ovBook', true); }
+
 function showNextCard(){
   if (!G || !G.cards.length || $('ovCard').classList.contains('on')) return;
   const type = G.cards.shift(), d = ZOMBIES[type];
@@ -1717,7 +1852,7 @@ function onTap(p, ptype){
   const tw = towerAtCanon(lx,ly);
   if (G.placing){
     if (tw){ G.placing = null; G.ghost = null; G.sel = tw; sfx('click'); refreshPanel(true); return; }
-    if (!canBuild(lx,ly)){ sfx('err'); const v = G.grid[ly][lx]; toast(v === 1 ? "Can't block the aisle" : v === 3 ? "That's the kitchen!" : "Can't build there"); G.ghost = null; return; }
+    if (!canBuild(lx,ly)){ sfx('err'); const v = G.grid[ly][lx]; toast(v === 1 ? "Can't block the aisle" : v === 3 ? "That's the kitchen!" : v === 4 ? "That table is reserved! Use a marked floor tile" : "Can't build there"); G.ghost = null; return; }
     if (ptype === 'mouse' || (G.ghost && G.ghost.sx === p.sx && G.ghost.sy === p.sy)){
       if (buildTower(G.placing, lx, ly)){ G.placing = null; G.ghost = null; refreshPanel(true); }
     } else { G.ghost = { sx:p.sx, sy:p.sy }; sfx('click'); }
@@ -1753,12 +1888,16 @@ function bindUI(){
   $('pRestart').onclick = () => { sfx('click'); setModal('ovPause', false); startLevel(G.mode, G.idx); };
   $('pQuit').onclick = () => { sfx('click'); setModal('ovPause', false); G = null; show('title'); };
   $('resClose').onclick = () => { sfx('click'); setModal('ovResearch', false); };
+  $('bGuide').onclick = () => openBook();
+  $('pGuide').onclick = () => openBook();
+  $('bookClose').onclick = () => { sfx('click'); setModal('ovBook', false); };
   $('cardOk').onclick = () => { sfx('click'); setModal('ovCard', false); showNextCard(); };
   $('iUp').onclick = () => upgradeTower(G && G.sel);
   $('iSell').onclick = () => sellTower(G && G.sel);
   $('iClose').onclick = () => { sfx('click'); cancelAll(); };
   $('iTarget').onclick = () => { if (!G || !G.sel) return; const t = G.sel; t.mode = TARGET_MODES[(TARGET_MODES.indexOf(t.mode)+1) % TARGET_MODES.length]; sfx('click'); refreshPanel(true); };
   addEventListener('keydown', ev => {
+    if (ev.key === 'Escape' && $('ovBook').classList.contains('on')){ setModal('ovBook', false); return; }
     if (screen !== 'game' || !G) return;
     const k = ev.key.toLowerCase();
     if (k === ' '){ ev.preventDefault(); if ($('ovCard').classList.contains('on')) $('cardOk').click(); else togglePause(); return; }
