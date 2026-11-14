@@ -2,14 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Feed the Dead">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
 <meta name="theme-color" content="#14121c">
 <title>Feed the Dead</title>
 <style>
 :root{--bg:#14121c;--panel:#221d2e;--edge:#0a0810;--hi:#3d3352;--hi2:#4f4369;--txt:#f2ead6;--dim:#a99fbf;--gold:#ffd23f;--red:#ff5a5a;--green:#7dff6a;--pink:#ff4fa3;--blue:#5fc8ff}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:"Courier New",Courier,monospace;font-weight:bold;overflow:hidden;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
-#app{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden}
+#app{position:fixed;top:env(safe-area-inset-top);right:env(safe-area-inset-right);bottom:env(safe-area-inset-bottom);left:env(safe-area-inset-left);display:flex;flex-direction:column;overflow:hidden}
 button{font:inherit;font-size:14px;color:var(--txt);background:var(--hi);border:0;border-radius:0;box-shadow:inset -3px -3px 0 rgba(0,0,0,.35),inset 3px 3px 0 rgba(255,255,255,.12),0 0 0 3px var(--edge);min-height:40px;min-width:40px;padding:6px 10px;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;touch-action:manipulation}
 button:hover:not(:disabled){background:var(--hi2)}
 button:active:not(:disabled){box-shadow:inset 3px 3px 0 rgba(0,0,0,.35),0 0 0 3px var(--edge);transform:translateY(1px)}
@@ -1936,6 +1943,7 @@ function frame(ts){
 /* ================================ BOOT ================================ */
 loadSave(); bindUI(); layout(); show('title');
 requestAnimationFrame(frame);
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 // test hook (harmless): lets a scripted bot play levels headlessly
 window.FTD = { get G(){ return G; }, update, newGame, startLevel, buildTower, upgradeTower, sellTower, startWave, canBuild,
   LEVELS, STATIONS, ZOMBIES, STATION_UNLOCK, get save(){ return save; }, writeSave };

@@ -23,3 +23,12 @@ Optional keys: `1-9, 0` stations · `R` recipes · `N` next wave · `F` speed ·
 
 ## Tweaking
 All data lives at the top of the script: `STATIONS`, `ZOMBIES` (including food preferences), `THEMES`, `LEVELS` (paths and wave strings such as `"runner 8 0.6"`), `PERKS` and `RESEARCH`.
+
+## Install on your iPhone (Home Screen, offline)
+1. Turn on GitHub Pages for this repo (**Settings → Pages → Deploy from a branch → main, / (root)**).
+2. In **Safari** on your iPhone, open `https://<your-username>.github.io/<repo-name>/feed-the-dead/`.
+3. Tap **Share → Add to Home Screen → Add**.
+
+It runs full-screen, works offline, and saves progress on the phone. Removing the Home Screen
+icon deletes your saved progress. After changing `index.html`, bump `VERSION` in `sw.js` so
+phones pick up the update.
