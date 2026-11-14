@@ -1,6 +1,6 @@
 // Caches the app files so it opens with no internet connection.
 // Bump VERSION whenever index.html changes so phones pick up the update.
-const VERSION = 'feed-the-dead-v1';
+const VERSION = 'feed-the-dead-v2';
 const FILES = ['./', './index.html', './manifest.json', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {

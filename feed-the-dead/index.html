@@ -16,7 +16,7 @@
 :root{--bg:#14121c;--panel:#221d2e;--edge:#0a0810;--hi:#3d3352;--hi2:#4f4369;--txt:#f2ead6;--dim:#a99fbf;--gold:#ffd23f;--red:#ff5a5a;--green:#7dff6a;--pink:#ff4fa3;--blue:#5fc8ff}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:"Courier New",Courier,monospace;font-weight:bold;overflow:hidden;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
-#app{position:fixed;top:env(safe-area-inset-top);right:env(safe-area-inset-right);bottom:env(safe-area-inset-bottom);left:env(safe-area-inset-left);display:flex;flex-direction:column;overflow:hidden}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden}
 button{font:inherit;font-size:14px;color:var(--txt);background:var(--hi);border:0;border-radius:0;box-shadow:inset -3px -3px 0 rgba(0,0,0,.35),inset 3px 3px 0 rgba(255,255,255,.12),0 0 0 3px var(--edge);min-height:40px;min-width:40px;padding:6px 10px;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;touch-action:manipulation}
 button:hover:not(:disabled){background:var(--hi2)}
 button:active:not(:disabled){box-shadow:inset 3px 3px 0 rgba(0,0,0,.35),0 0 0 3px var(--edge);transform:translateY(1px)}
@@ -24,7 +24,7 @@ button:disabled{opacity:.45;cursor:default}
 button.good{background:#2f7a32}button.good:hover:not(:disabled){background:#3b9440}
 button.bad{background:#8a2a33}button.bad:hover:not(:disabled){background:#a3343e}
 button.gold{background:#8a6a14}button.gold:hover:not(:disabled){background:#a07c1a}
-.screen{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;overflow-y:auto;overflow-x:hidden;padding:16px}
+.screen{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;overflow-y:auto;overflow-x:hidden;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 .screen.on{display:flex}
 h1,h2,h3{margin:.3em 0;text-transform:uppercase;letter-spacing:2px}
 h2{color:var(--green);text-shadow:3px 3px 0 var(--edge)}
@@ -49,25 +49,25 @@ h2{color:var(--green);text-shadow:3px 3px 0 var(--edge)}
 .item .tx{flex:1;min-width:0;text-align:left}.item .tx b{display:block}.item .tx span{font-size:12px;color:var(--dim)}
 .pips{color:var(--gold);letter-spacing:2px}
 /* ---- game ---- */
-#game{padding:0;align-items:stretch;overflow:hidden}
-#hud{display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--panel);border-bottom:3px solid var(--edge);flex:none;min-height:52px}
+#game{padding:0 !important;align-items:stretch;overflow:hidden}
+#hud{display:flex;align-items:center;gap:6px;padding:calc(6px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right)) 6px calc(8px + env(safe-area-inset-left));background:var(--panel);border-bottom:3px solid var(--edge);flex:none;min-height:52px}
 .stat{font-size:15px;white-space:nowrap;padding:0 2px;min-width:0}
 #hLives{color:#ff8a8a}#hGold{color:var(--gold)}#hWave{color:var(--blue)}
 #hud .sp{flex:1}
 #bNext{min-width:76px}
 #main{flex:1;display:flex;min-height:0;min-width:0}
-body.land #main{flex-direction:row}
+body.land #main{flex-direction:row;padding-left:env(safe-area-inset-left);background:#0c0a12}
 body.port #main{flex-direction:column}
 #stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;min-height:0;min-width:0;overflow:hidden;background:#0c0a12}
-#cv{image-rendering:pixelated;image-rendering:crisp-edges;display:block;touch-action:none;box-shadow:0 0 0 3px var(--edge)}
+#cv{image-rendering:pixelated;image-rendering:crisp-edges;display:block;touch-action:none}
 #panel{background:var(--panel);display:flex;flex-direction:column;gap:10px;padding:10px;flex:none}
-body.land #panel{width:262px;border-left:3px solid var(--edge);overflow-y:auto}
-body.port #panel{height:150px;border-top:3px solid var(--edge);padding:8px}
+body.land #panel{width:calc(262px + env(safe-area-inset-right));border-left:3px solid var(--edge);overflow-y:auto;padding-right:calc(10px + env(safe-area-inset-right));padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+body.port #panel{height:calc(146px + env(safe-area-inset-bottom));border-top:3px solid var(--edge);padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
 #palette{display:grid;gap:8px}
 body.land #palette{grid-template-columns:repeat(3,1fr)}
-body.port #palette{grid-template-columns:repeat(6,1fr);gap:6px}
+body.port #palette{grid-template-columns:repeat(6,1fr);grid-auto-rows:1fr;gap:6px;height:100%}
 .pbtn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2px;min-height:58px;gap:0;text-transform:none;min-width:0}
-body.port .pbtn{min-height:58px}
+body.port .pbtn{min-height:0}
 .pbtn canvas{width:36px;height:36px;image-rendering:pixelated}
 .pbtn .c{font-size:12px;color:var(--gold)}
 .pbtn .k{position:absolute;top:1px;left:4px;font-size:10px;color:var(--dim)}
@@ -999,9 +999,36 @@ function drawDeco(c, T, k, ox, oy){
       R(c, ox+6, oy+12, 20, 15, '#3a6ad8'); R(c, ox+6, oy+10, 20, 4, '#ffffff'); R(c, ox+13, oy+8, 6, 2, '#ddd'); break;
   }
 }
+// Floor beyond the playable grid (decorative only, never buildable). Entrance aisles run out to the edge.
+function drawMargin(c, T, W, H, px, py){
+  if (!px && !py) return;
+  const cols = W/TILE, rows = H/TILE, mx = Math.ceil(px/TILE), my = Math.ceil(py/TILE);
+  const aisle = new Set();
+  for (const p of G.paths){ const s = p.segs[0]; if (!s) continue;
+    const dx = Math.sign(s.b.x - s.a.x), dy = Math.sign(s.b.y - s.a.y);
+    let sx = Math.floor(s.a.x/TILE), sy = Math.floor(s.a.y/TILE);
+    for (let i=0; i<40; i++){ if (sx < -mx || sy < -my || sx >= cols+mx || sy >= rows+my) break; aisle.add(sx+','+sy); sx -= dx; sy -= dy; }
+  }
+  const isA = (x,y) => aisle.has(x+','+y) || (x>=0 && y>=0 && x<cols && y<rows && (cellW(x,y) === 1 || cellW(x,y) === 3));
+  for (let sy=-my; sy<rows+my; sy++) for (let sx=-mx; sx<cols+mx; sx++){
+    if (sx>=0 && sy>=0 && sx<cols && sy<rows) continue;
+    const ox = px + sx*TILE, oy = py + sy*TILE, rnd = mulberry((sx+50)*131 + (sy+50)*977 + 7);
+    const [lx,ly] = G.flip ? [sy,sx] : [sx,sy];
+    drawFloorTile(c, T, ox, oy, ((lx%2)+2)%2, ((ly%2)+2)%2, rnd);
+    if (aisle.has(sx+','+sy)){
+      R(c, ox, oy, TILE, TILE, T.a1); const e = 3;
+      if (!isA(sx,sy-1)) R(c, ox, oy, TILE, e, T.ae);
+      if (!isA(sx,sy+1)) R(c, ox, oy+TILE-e, TILE, e, T.ae);
+      if (!isA(sx-1,sy)) R(c, ox, oy, e, TILE, T.ae);
+      if (!isA(sx+1,sy)) R(c, ox+TILE-e, oy, e, TILE, T.ae);
+    } else { c.globalAlpha = 0.22; R(c, ox, oy, TILE, TILE, '#000'); c.globalAlpha = 1; }
+  }
+}
 function buildBg(){
-  const T = THEMES[G.L.theme], W = mapW(), H = mapH();
-  const bg = document.createElement('canvas'); bg.width = W; bg.height = H; const c = bg.getContext('2d');
+  const T = THEMES[G.L.theme], W = mapW(), H = mapH(), px = G.pad.x, py = G.pad.y;
+  const bg = document.createElement('canvas'); bg.width = W + 2*px; bg.height = H + 2*py; const c = bg.getContext('2d');
+  drawMargin(c, T, W, H, px, py);
+  c.translate(px, py);
   const isP = (sx,sy) => { const v = cellW(sx,sy); return v === 1 || v === 3; };
   for (let sy=0; sy<H/TILE; sy++) for (let sx=0; sx<W/TILE; sx++){
     const [lx,ly] = swap(sx,sy,G.flip), v = G.grid[ly][lx], ox = sx*TILE, oy = sy*TILE, rnd = mulberry(lx*131 + ly*977 + 7);
@@ -1027,9 +1054,11 @@ function buildBg(){
   }
   for (const d of G.map.deco){ const [sx,sy] = swap(d.x,d.y,G.flip); drawDeco(c, T, d.k, sx*TILE, sy*TILE); }
   // mood lighting: vignette (darker at night)
-  const g = c.createRadialGradient(W/2, H/2, Math.min(W,H)*0.3, W/2, H/2, Math.max(W,H)*0.75);
+  c.translate(-px, -py);
+  const BW = bg.width, BH = bg.height;
+  const g = c.createRadialGradient(BW/2, BH/2, Math.min(BW,BH)*0.3, BW/2, BH/2, Math.max(BW,BH)*0.75);
   g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, T.night ? 'rgba(10,0,30,0.55)' : 'rgba(10,0,20,0.3)');
-  c.fillStyle = g; c.fillRect(0, 0, W, H);
+  c.fillStyle = g; c.fillRect(0, 0, BW, BH);
   G.bg = bg;
 }
 
@@ -1048,6 +1077,7 @@ function newGame(mode, idx){
   };
   G.maxLives = G.lives;
   if (mode === 'campaign'){ G.waves = parseWaves(L.waves); G.totalWaves = G.waves.length; }
+  G.pad = { x:0, y:0 };
   G.map = buildGrid(L, (mode === 'campaign' ? idx+1 : 99) * 7919);
   G.grid = G.map.grid;
   buildPaths(); buildBg(); recalcMods();
@@ -1437,6 +1467,7 @@ function render(){
   c.save();
   if (G.shake > 0 && !save.opt.calm){ const m = Math.ceil(G.shake*8); c.translate((Math.random()*2-1)*m|0, (Math.random()*2-1)*m|0); }
   c.drawImage(G.bg, 0, 0);
+  c.translate(G.pad.x, G.pad.y);
   for (const en of G.entries) drawEntrance(c, en.x, en.y, G.anim);
   // placement preview
   const prev = G.placing ? (G.ghost || G.hover) : null;
@@ -1834,22 +1865,23 @@ function reorient(){
 }
 function fitCanvas(){
   const cv = $('cv'), W = mapW(), H = mapH();
-  if (cv.width !== W || cv.height !== H){ cv.width = W; cv.height = H; ctx.imageSmoothingEnabled = false; }
-  const st = $('stage'), aw = st.clientWidth - 8, ah = st.clientHeight - 8;
+  const st = $('stage'), aw = st.clientWidth, ah = st.clientHeight;
   if (aw <= 0 || ah <= 0) return;
-  // choose scale in device pixels so pixels stay crisp
-  const dpr = window.devicePixelRatio || 1;
-  let s = Math.min(aw/W, ah/H) * dpr; const fs = Math.floor(s);
-  if (fs >= 1 && fs >= s*0.86) s = fs;
-  s /= dpr;
-  cv.style.width = Math.floor(W*s) + 'px'; cv.style.height = Math.floor(H*s) + 'px';
+  // scale the playable grid as large as it fits, then extend the floor so the canvas fills the whole stage
+  const s = Math.min(aw/W, ah/H);
+  const px = Math.max(0, Math.ceil((aw/s - W)/2)), py = Math.max(0, Math.ceil((ah/s - H)/2));
+  if (G.pad.x !== px || G.pad.y !== py || !G.bg || G.bg.width !== W + 2*px || G.bg.height !== H + 2*py){ G.pad = { x:px, y:py }; buildBg(); }
+  const CW = W + 2*px, CH = H + 2*py;
+  if (cv.width !== CW || cv.height !== CH){ cv.width = CW; cv.height = CH; ctx.imageSmoothingEnabled = false; }
+  cv.style.width = aw + 'px'; cv.style.height = ah + 'px';
 }
 
 /* =============================== INPUT =============================== */
 let lastPointer = 'mouse';
 function evTile(ev){
   const cv = $('cv'), r = cv.getBoundingClientRect();
-  const x = (ev.clientX - r.left) / r.width * cv.width, y = (ev.clientY - r.top) / r.height * cv.height;
+  const pad = (G && G.pad) || { x:0, y:0 };
+  const x = (ev.clientX - r.left) / r.width * cv.width - pad.x, y = (ev.clientY - r.top) / r.height * cv.height - pad.y;
   return { sx:Math.floor(x/TILE), sy:Math.floor(y/TILE), x, y };
 }
 function onTap(p, ptype){
